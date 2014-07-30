@@ -48,7 +48,7 @@ class TokenFilterEnRu implements TokenFilterInterface
      */
     protected function configs()
     {
-        $dictionariesRoot = __DIR__ . '/../resources/phpmorphy/dicts';
+        $dictionariesRoot = __DIR__ . '/../../../resources/phpmorphy/dictionaries';
 
         $configs = array();
 
@@ -98,7 +98,7 @@ class TokenFilterEnRu implements TokenFilterInterface
      * @param $str
      * @return phpMorphy
      */
-    protected function getMorphyObjectBySearchingToken($str)
+    protected function getPhpmorphyByString($str)
     {
         $lang = self::languageDetect($str);
 
@@ -121,7 +121,7 @@ class TokenFilterEnRu implements TokenFilterInterface
      */
     protected function getPseudoRoot($toSearch)
     {
-        $morphy = $this->getMorphyObjectBySearchingToken($toSearch);
+        $morphy = $this->getPhpmorphyByString($toSearch);
         return $morphy->getPseudoRoot($toSearch);
     }
 
@@ -133,7 +133,7 @@ class TokenFilterEnRu implements TokenFilterInterface
      */
     protected function getDictionaryEncoding($toSearch)
     {
-        $morphy = $this->getMorphyObjectBySearchingToken($toSearch);
+        $morphy = $this->getPhpmorphyByString($toSearch);
         $resultEncoding = $morphy->getEncoding();
 
         $encodingsList = mb_list_encodings();
