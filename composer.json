@@ -1,5 +1,5 @@
 {
-    "name": "nqxcode/zendsearch-stemmer-en-ru",
+    "name": "nqxcode/lucene-stemmer-en-ru",
     "description": "ZendSearch morphology token filter for english and russian words.",
     "keywords" : ["zendsearch", "lucene", "stemming", "morphology", "filter", "russian", "english"],
     "license": "MIT",
@@ -13,7 +13,7 @@
     "require": {
         "php": ">=5.4.0",
         "nqxcode/zendsearch": "dev-master",
-        "nqxcode/phpmorphy": "dev-master"
+        "nqxcode/phpmorphy": "1.*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Nqxcode\\Stemming\\": "src/Nqxcode/Stemming",
+                "Nqxcode\\Stemming\\": "src/Nqxcode/Stemming",
             "tests\\": "tests/"
         }
     }
