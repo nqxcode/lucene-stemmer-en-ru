@@ -159,7 +159,7 @@ class TokenFilterEnRu implements TokenFilterInterface
             return null;
         }
 
-        $sourceStr = iconv('utf-8', "{$encoding}//IGNORE", $sourceStr);
+        $sourceStr = mb_convert_encoding($sourceStr, $encoding, 'utf-8');
 
         if (mb_strlen($sourceStr, $encoding) < self::MIN_TOKEN_LENGTH) {
             return null;
@@ -216,7 +216,7 @@ class TokenFilterEnRu implements TokenFilterInterface
             }
         }
 
-        $newTokenString = iconv($encoding, 'utf-8//IGNORE', $newTokenString);
+        $newTokenString = mb_convert_encoding($newTokenString, 'utf-8', $encoding);
 
         $newToken = new Token(
             $newTokenString,
