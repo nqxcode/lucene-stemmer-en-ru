@@ -9,14 +9,13 @@
             "email": "nc101ux@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
-        "nqxcode/zendsearch": "dev-master",
+        "nqxcode/zendsearch": "2.*",
         "nqxcode/phpmorphy": "1.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "3.7.*",
+        "phpunit/phpunit": "4.6.*",
         "mockery/mockery": "0.9.*"
     },
     "autoload": {
@@ -24,5 +23,6 @@
                 "Nqxcode\\Stemming\\": "src/Nqxcode/Stemming",
             "tests\\": "tests/"
         }
-    }
+    },
+    "minimum-stability": "stable"
 }
