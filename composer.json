@@ -18,6 +18,9 @@
         "phpunit/phpunit": "4.6.*",
         "mockery/mockery": "0.9.*"
     },
+    "suggest": {
+        "ext-stemmer": "Enabling the stemmer extension makes stemming more correct. Install the stemmer extension by following the instructions on https://github.com/hthetiot/php-stemmer#install"
+    },
     "autoload": {
         "psr-4": {
                 "Nqxcode\\Stemming\\": "src/Nqxcode/Stemming",

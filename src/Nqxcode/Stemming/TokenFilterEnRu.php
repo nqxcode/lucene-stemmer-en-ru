@@ -119,7 +119,7 @@ class TokenFilterEnRu implements TokenFilterInterface
      * @param string $toSearch
      * @return string[]
      */
-    protected function getPseudoRoot($toSearch)
+    protected function getPseudoRoots($toSearch)
     {
         $morphy = $this->getPhpmorphyByString($toSearch);
         return $morphy->getPseudoRoot($toSearch);
@@ -149,12 +149,29 @@ class TokenFilterEnRu implements TokenFilterInterface
      */
     public function normalize(Token $srcToken)
     {
+        $newTokenString = $this->getPseudoRoot($srcToken->getTermText());
+
+
+        $newToken = new Token(
+            $newTokenString,
+            $srcToken->getStartOffset(),
+            $srcToken->getEndOffset()
+        );
+
+        $newToken->setPositionIncrement($srcToken->getPositionIncrement());
+
+        return $newToken;
+    }
+
+    private function getPhpmorphyPseudoRoot($sourceStr)
+    {
         $pseudoRootList = [];
 
-        $sourceStr = mb_strtoupper($srcToken->getTermText(), 'utf-8');
+        $sourceStr = mb_strtoupper($sourceStr, 'utf-8');
+
         $encoding = $this->getDictionaryEncoding($sourceStr);
 
-         // If the lexeme is shorter than MIN_TOKEN_LENGTH of characters, we don't use it.
+        // If the lexeme is shorter than MIN_TOKEN_LENGTH of characters, we don't use it.
         if (mb_strlen($sourceStr, 'utf-8') < self::MIN_TOKEN_LENGTH) {
             return null;
         }
@@ -171,7 +188,7 @@ class TokenFilterEnRu implements TokenFilterInterface
         $pseudoRootResult[] = $sourceStr;
         do {
             $temp = $pseudoRootResult[0];
-            $pseudoRootResult = $this->getPseudoRoot($temp);
+            $pseudoRootResult = $this->getPseudoRoots($temp);
 
             // If many pseudo-roots return, select the shortest.
             if (is_array($pseudoRootResult)) {
@@ -196,36 +213,47 @@ class TokenFilterEnRu implements TokenFilterInterface
 
         if (count($pseudoRootList) == 0 && $pseudoRootResult === false) {
             // If unable to get pseudo-root, take the original word.
-            $newTokenString = $sourceStr;
+            $pseudoRootStr = $sourceStr;
         } else {
             // From the received list of pseudo-roots select the first which length is at least MIN_TOKEN_LENGTH.
-            $newTokenString = null;
+            $pseudoRootStr = null;
 
             foreach ($pseudoRootList as $pseudoRoot) {
                 if (mb_strlen($pseudoRoot, $encoding) < self::MIN_TOKEN_LENGTH) {
                     continue;
                 } else {
-                    $newTokenString = $pseudoRoot;
+                    $pseudoRootStr = $pseudoRoot;
                     break;
                 }
             }
 
             // If unable to get pseudo-root even now, take the original word.
-            if (is_null($newTokenString)) {
-                $newTokenString = $sourceStr;
+            if (is_null($pseudoRootStr)) {
+                $pseudoRootStr = $sourceStr;
             }
         }
 
-        $newTokenString = mb_convert_encoding($newTokenString, 'utf-8', $encoding);
+        $pseudoRootStr = mb_convert_encoding($pseudoRootStr, 'utf-8', $encoding);
+        return $pseudoRootStr;
+    }
 
-        $newToken = new Token(
-            $newTokenString,
-            $srcToken->getStartOffset(),
-            $srcToken->getEndOffset()
-        );
+    private function getPhpStemmerPseudoRoot($word)
+    {
+        $word = mb_strtolower($word, 'utf-8');
 
-        $newToken->setPositionIncrement($srcToken->getPositionIncrement());
+        return stemword($word, $this->languageDetect($word), 'UTF_8');
+    }
 
-        return $newToken;
+    private function getPseudoRoot($word)
+    {
+        if (extension_loaded('stemmer')) {
+            $pseudoRoot =  $this->getPhpStemmerPseudoRoot($word);
+        } else {
+            $pseudoRoot = $this->getPhpmorphyPseudoRoot($word);
+        }
+
+        $pseudoRoot = mb_strtoupper($pseudoRoot, 'utf-8');
+
+        return $pseudoRoot;
     }
 }
