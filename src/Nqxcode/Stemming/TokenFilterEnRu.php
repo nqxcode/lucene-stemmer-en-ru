@@ -43,7 +43,7 @@ class TokenFilterEnRu implements TokenFilterInterface
 
     /**
      * Receives the list of configurations for phpMorphy for en/ru dictionaries.
-     *getPseudoRoot
+     *
      * @return array
      */
     protected function configs()
@@ -149,8 +149,9 @@ class TokenFilterEnRu implements TokenFilterInterface
      */
     public function normalize(Token $srcToken)
     {
-        $newTokenString = $this->getPseudoRoot($srcToken->getTermText());
+        $termText = $srcToken->getTermText();
 
+        $newTokenString = !is_numeric($termText) ? $this->getPseudoRoot($termText) : $termText;
 
         $newToken = new Token(
             $newTokenString,
